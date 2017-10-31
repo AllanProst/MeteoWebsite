@@ -64,14 +64,16 @@
     update: function( event, ui ) {
       var sortedIDs = $( "#sortable" ).sortable( "toArray" );
       var sortedIDsstring = JSON.stringify(sortedIDs);
-
-          $.getJSON("http://localhost:8080/move?newposition="+sortedIDsstring, function(data) {
+        /// envoi de l'URL au server
+      $.getJSON("http://localhost:8080/move?newposition="+sortedIDsstring, function(data) {
+        });
+          /// Boucle each qui écrase les id de chaque li à chaque déplacement
+          $("li").each(function(i){
+            $(this).attr("id",i)
           });
-
+          //////////////////////////////////////////////////////
     }
   });
-
-
   </script>
 
 </body>
