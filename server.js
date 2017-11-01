@@ -38,7 +38,6 @@ for (var i = 0; i < villesHome.length; i++) {
 app.get("/move", function(req, res) {
   var neworder = JSON.parse(req.query.newposition);
   var newcityList = [];
-      console.log(req.query.newposition);
   for (var i = 0; i < neworder.length; i++) {
     newcityList.push(cityList[neworder[i]]);
   }
