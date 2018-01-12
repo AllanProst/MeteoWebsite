@@ -5,14 +5,8 @@
   src="http://code.jquery.com/jquery-3.2.1.js"
   integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
   crossorigin="anonymous"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
-
-
-
 
   <meta charset="utf-8">
-
   <title>Weather App</title>
   <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -22,14 +16,15 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
+  <h3></h3>
+     <div id="map"></div>
   <div class="container sectionCity">
     <div class="row">
-      <div class="col-xs-12 col-sm-offset-2 col-sm-8">
+      <div class="col-xs-12 col-sm-6">
         <form class="form-inline" action="add">
           <div class="form-group">
             <label for="city">Ville</label>
-            <input type="text" name="nameVille" class="form-control" id="city" placeholder="Lyon, Paris ...">
+            <input id="proutte" type="text" name="nameVille" class="form-control" placeholder="Lyon, Paris ...">
           </div>
           <button type="submit" id="btn-valide" class="btn btn-warning">Enregistrer</button>
         </form>
@@ -44,13 +39,13 @@
       <div class="col-xs-12 col-sm-offset-2 col-sm-8">
         <ul class="list-group" id="sortable">
           <% for(var i=0; i<cityList.length; i++){%>
-            <li id="<%=i%>" class="list-group-item ui-state-default ui-icon ui-icon-arrowthick-2-n-s">
+            <li data-lat="<%= cityList[i].lat %>" data-lng="<%= cityList[i].lng %>" id="<%=[i]%>" class="list-group-item ui-state-default ui-icon ui-icon-arrowthick-2-n-s">
             <span class="city"><%= cityList[i].name %></span>
             <img class="logo-meteo" src=<%= cityList[i].iconemeteo %>
             <span class="desc"><%= cityList[i].desc %></span>
             <span class="label label-warning"><%= cityList[i].tempmax %></span>
             <span class="label label-default"><%= cityList[i].tempmin %></span>
-            <a href="/suppr?indice=<%=i%>"><span class="glyphicon glyphicon-remove-circle"></span></a>
+            <a href="/suppr?id=<%=cityList[i].id%>"<span class="glyphicon glyphicon-remove-circle"></span></a>
             </li>
           <% } %>
 
@@ -58,7 +53,7 @@
       </div>
     </div>
   </div>
-
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <script>
   $( "#sortable" ).sortable({
     update: function( event, ui ) {
@@ -68,14 +63,48 @@
       $.getJSON("http://localhost:8080/move?newposition="+sortedIDsstring, function(data) {
         });
           /// Boucle each qui écrase les id de chaque li à chaque déplacement
-          $("li").each(function(i){
-            $(this).attr("id",i);
-            $(this).find("a").attr("href","/suppr?indice="+i);
-          });
+           $("li").each(function(i){
+             $(this).attr("id",i);
+           });
           //////////////////////////////////////////////////////
     }
   });
   </script>
+  <script>
+       var autocomplete;
+       var newCity;
+       var marker;
+       var centerMap;
 
+       function googleMapsAPIS() {
+        autocomplete = new google.maps.places.Autocomplete(document.getElementById("proutte"));
+        centerMap = {lat: 48.866667, lng: 2.333333};
+        var map = new google.maps.Map(document.getElementById("map"), {
+         zoom: 8,
+         center: centerMap
+       });
+
+      $("li").on("click", function(){
+        map.setCenter({lat: $(this).data("lat"), lng: $(this).data("lng")});
+      });
+
+
+        $("li").each(function(index) {
+         newCity = {lat: $(this).data("lat"), lng: $(this).data("lng")};
+         marker = new google.maps.Marker({
+           position: newCity,
+           map: map
+         });
+         console.log(this);
+
+       });
+
+        map.setCenter(marker.getPosition());
+      }
+
+    </script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCaByhGWo2OK3wRpAVy1HsAtqdGjJ-oedg&libraries=places&callback=googleMapsAPIS"
+         async defer></script>
 </body>
 </html>

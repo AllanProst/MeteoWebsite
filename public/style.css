@@ -18,3 +18,8 @@ body {
  padding-top: 25px;
  padding-bottom: 25px;
 }
+
+  #map {
+        height: 400px;
+        width: 100%;
+       }
